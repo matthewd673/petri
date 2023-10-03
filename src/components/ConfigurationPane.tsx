@@ -1,12 +1,19 @@
-import { FormEvent } from "react";
+import WorldConfig from "../utils/WorldConfig";
+import CanvasConfig from "../utils/CanvasConfig";
 
 interface ConfigurationPaneProps {
-  width: number,
-  height: number,
-  scale: number,
+  worldConfig: WorldConfig,
+  setWorldConfig: any,
+  canvasConfig: CanvasConfig,
+  setCanvasConfig: any,
 }
 
-const ConfigurationPane = () => {
+const ConfigurationPane = ({
+  worldConfig,
+  setWorldConfig,
+  canvasConfig,
+  setCanvasConfig,
+  } : ConfigurationPaneProps) => {
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
@@ -16,13 +23,23 @@ const ConfigurationPane = () => {
       height: { value: number },
       default: { value: number },
       oobValue: { value: number },
-      oobWrap: { value: number },
+      oobWrap: { value: boolean },
 
       // canvas properties
       scale: { value: number },
     };
 
-    console.log(target.width.value);
+    setWorldConfig({
+      width: target.width.value,
+      height: target.height.value,
+      default: target.default.value,
+      oobValue: target.oobValue.value,
+      oobWrap: target.oobWrap.value,
+    });
+
+    setCanvasConfig({
+      scale: target.scale.value,
+    });
   }
 
   return (
