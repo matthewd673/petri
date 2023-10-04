@@ -11,6 +11,8 @@ class Petri {
   private world;
 
   private lastFrameTime = 0;
+  private currentSteps = 0;
+  private canAnimate = false;
 
   private seedFunction: Function | undefined;
   private stepFunction: Function | undefined;
@@ -74,6 +76,11 @@ class Petri {
           return;
     }
 
+    // stop animating
+    this.lastFrameTime = 0;
+    this.currentSteps = 0;
+    this.canAnimate = false;
+
     if (!this.seedFunction) {
       console.error("Attempted to seed but seed function is undefined");
       return;
@@ -110,14 +117,40 @@ class Petri {
   }
 
   animate = (time: number) => {
-    if (time - this.lastFrameTime < 100) { // 100ms delay
+    if (!this.canvasConfig) {
+      console.error("Animate is unavailable");
+      return;
+    }
+
+    // done when max is reached or animation is paused
+    if (!this.canAnimate ||
+        (this.canvasConfig.maxGens > 0 &&
+         this.currentSteps >= this.canvasConfig.maxGens)) {
+      return;
+    }
+
+    // delay animation
+    if (time - this.lastFrameTime < this.canvasConfig.delay) {
       window.requestAnimationFrame(this.animate);
       return;
     }
+
+    // perform steps and continue animating
     this.lastFrameTime = time;
     this.stepAll();
+    this.currentSteps += 1;
+
     window.requestAnimationFrame(this.animate);
   };
+
+  play = () => {
+    this.canAnimate = true;
+    this.animate(0);
+  }
+
+  pause = () => {
+    this.canAnimate = false;
+  }
 
   draw = () => {
     if (!this.context ||
@@ -131,8 +164,8 @@ class Petri {
 
     for (let i = 0; i < this.worldConfig.width; i++) {
       for (let j = 0; j < this.worldConfig.height; j++) {
-        this.context.fillStyle = this.colorFunction(this.world[i][j]);
-        // this.context.fillStyle = "rgb(100, 0, 0)";
+        const color = this.colorFunction(this.world[i][j]);
+        this.context.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
 
         this.context.fillRect(
           i * this.canvasConfig.scale,

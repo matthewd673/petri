@@ -27,6 +27,8 @@ const ConfigurationPane = ({
 
       // canvas properties
       scale: { value: number },
+      delay: { value: number },
+      maxGens: { value: number},
     };
 
     setWorldConfig({
@@ -39,6 +41,8 @@ const ConfigurationPane = ({
 
     setCanvasConfig({
       scale: target.scale.value,
+      delay: target.delay.value,
+      maxSteps: target.maxGens.value,
     });
   }
 
@@ -69,8 +73,16 @@ const ConfigurationPane = ({
         </label>
         <h3>Canvas</h3>
         <label>
-          Scale (pixels):
+          Cell scale (pixels):
           <input name="scale" type="number" defaultValue={4} />
+        </label>
+        <label>
+          Step animation delay (ms):
+          <input name="delay" type="number" defaultValue={100} />
+        </label>
+        <label>
+          Max generations:
+          <input name="maxGens" type="number" defaultValue={0} />
         </label>
         <button type="submit">Apply</button>
       </form>

@@ -22,6 +22,9 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
 
   const [newCode, setNewCode] = useState(false);
 
+  const [freshPlay, setFreshPlay] = useState(true);
+  const [playing, setPlaying] = useState(false);
+
   const buildCode = () => {
     if (!petri) {
       console.error("Build code is unavailable");
@@ -48,12 +51,28 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
   const handleReseedButton = () => {
     buildCode();
     petri?.seed();
+    setFreshPlay(true);
   }
 
   const handlePlayButton = () => {
-    buildCode();
-    petri?.seed();
-    petri?.animate(0); // TODO
+    if (playing) {
+      petri?.pause();
+      setPlaying(false);
+      return;
+    }
+
+    if (freshPlay) {
+      buildCode();
+      petri?.seed();
+      setFreshPlay(false);
+    }
+
+    petri?.play();
+    setPlaying(true);
+  }
+
+  const handleStepButton = () => {
+    petri?.stepAll();
   }
 
   // create new petri when config is updated
@@ -86,10 +105,8 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
         height={worldConfig.height * canvasConfig.scale}
         />
       <button onClick={handleReseedButton}>Re-seed</button>
-      <button onClick={handlePlayButton}>Play</button>
-      <button>Pause</button>
-      <button>Stop</button>
-      <button>Step</button>
+      <button onClick={handlePlayButton}>{playing ? "Pause" : "Play"}</button>
+      <button onClick={handleStepButton}>Step</button>
     </div>
   );
 }
