@@ -10,8 +10,11 @@ class Petri {
 
   private world;
 
+  private lastFrameTime = 0;
+
   private seedFunction: Function | undefined;
   private stepFunction: Function | undefined;
+  private colorFunction: Function | undefined;
 
   constructor(canvas: HTMLCanvasElement | null,
               worldConfig: WorldConfig,
@@ -60,46 +63,76 @@ class Petri {
     this.stepFunction = step;
   }
 
+  setColorFunction = (color: Function) => {
+    this.colorFunction = color;
+  }
+
   seed = () => {
+    if (!this.worldConfig ||
+        !this.world) {
+          console.error("Unavailable to step");
+          return;
+    }
+
     if (!this.seedFunction) {
       console.error("Attempted to seed but seed function is undefined");
       return;
     }
 
-    this.seedFunction();
+    for (let i = 0; i < this.worldConfig.width; i++) {
+      for (let j = 0; j < this.worldConfig.height; j++) {
+        this.world[i][j] = this.seedFunction(i, j);
+      }
+    }
 
     this.draw();
   }
 
-  step = () => {
+  stepAll = () => {
+    if (!this.worldConfig ||
+        !this.world) {
+          console.error("Unavailable to step");
+          return;
+    }
+
     if (!this.stepFunction) {
       console.error("Attempted to step but step function is undefined");
       return;
     }
 
-    this.stepFunction();
+    for (let i = 0; i < this.worldConfig.width; i++) {
+      for (let j = 0; j < this.worldConfig.height; j++) {
+        this.world[i][j] = this.stepFunction(i, j);
+      }
+    }
 
     this.draw();
   }
+
+  animate = (time: number) => {
+    if (time - this.lastFrameTime < 100) { // 100ms delay
+      window.requestAnimationFrame(this.animate);
+      return;
+    }
+    this.lastFrameTime = time;
+    this.stepAll();
+    window.requestAnimationFrame(this.animate);
+  };
 
   draw = () => {
     if (!this.context ||
         !this.worldConfig ||
         !this.canvasConfig ||
-        !this.world) {
+        !this.world ||
+        !this.colorFunction) {
       console.error("Draw is unavailable")
       return;
     }
 
     for (let i = 0; i < this.worldConfig.width; i++) {
       for (let j = 0; j < this.worldConfig.height; j++) {
-        // TODO: temp color system
-        if (this.world[i][j] === 1) {
-          this.context.fillStyle = "black";
-        }
-        else {
-          this.context.fillStyle = "white";
-        }
+        this.context.fillStyle = this.colorFunction(this.world[i][j]);
+        // this.context.fillStyle = "rgb(100, 0, 0)";
 
         this.context.fillRect(
           i * this.canvasConfig.scale,
@@ -109,9 +142,6 @@ class Petri {
           );
       }
     }
-
-    this.context.fillStyle = "black";
-    this.context.fillRect(0, 0, this.canvasConfig.scale, this.canvasConfig.scale);
   }
 
   setCell = (x: number, y: number, val: number) => {
@@ -130,12 +160,19 @@ class Petri {
   }
 
   getCell = (x: number, y: number) => {
-    if (!this.world) {
+    if (!this.world ||
+        !this.worldConfig) {
       console.error("Get cell is unavailable");
       return;
     }
 
-    return this.world[x][y]; // TODO: very basic
+    if (x >= 0 && x < this.worldConfig.width &&
+        y >= 0 && y < this.worldConfig.height) {
+          return this.world[x][y];
+        }
+
+    return this.worldConfig.oobValue; // TODO: oobWrap
+
   }
 }
 

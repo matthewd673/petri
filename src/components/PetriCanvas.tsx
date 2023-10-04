@@ -34,11 +34,12 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
 
     // eslint-disable-next-line no-new-func
     const codeFunction = new Function(
-      "get", "set",
+      "get",
       code);
-    const codeObject = codeFunction(petri.getCell, petri.setCell);
+    const codeObject = codeFunction(petri.getCell);
     petri.setSeedFunction(codeObject.seed);
     petri.setStepFunction(codeObject.step);
+    petri.setColorFunction(codeObject.color);
 
     setNewCode(false);
   }
@@ -52,7 +53,7 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
   const handlePlayButton = () => {
     buildCode();
     petri?.seed();
-    petri?.step(); // TODO
+    petri?.animate(0); // TODO
   }
 
   // create new petri when config is updated
