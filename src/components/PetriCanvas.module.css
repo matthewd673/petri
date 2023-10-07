@@ -1,3 +1,15 @@
+.canvasContainer {
+  width: max-content;
+}
+
 .petriCanvas {
   border: 1px solid black;
+}
+
+.playControls {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  gap: 8px;
 }

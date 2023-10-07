@@ -1,0 +1,21 @@
+.configContainer {
+  font-family: sans-serif;
+  max-width: 800px;
+  padding-left: 32px;
+  margin-bottom: 64px;
+}
+
+.configForm label {
+  margin-left: 12px;
+  white-space: nowrap;
+}
+
+.configForm input {
+  margin-left: 8px;
+  margin-bottom: 12px;
+}
+
+.submitButton {
+  float: right;
+  margin-right: 32px;
+}

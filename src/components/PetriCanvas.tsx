@@ -97,16 +97,18 @@ const PetriCanvas = ({ worldConfig, canvasConfig, code } : PetriCanvasProps) => 
   }, [code]);
 
   return (
-    <div>
+    <div className={styles.canvasContainer}>
       <canvas
         className={styles.petriCanvas}
         ref={canvasRef}
         width={worldConfig.width * canvasConfig.scale}
         height={worldConfig.height * canvasConfig.scale}
         />
-      <button onClick={handleReseedButton}>Re-seed</button>
-      <button onClick={handlePlayButton}>{playing ? "Pause" : "Play"}</button>
-      <button onClick={handleStepButton}>Step</button>
+      <div className={styles.playControls}>
+        <button onClick={handleReseedButton}>Re-seed</button>
+        <button onClick={handlePlayButton}>{playing ? "Pause" : "Play"}</button>
+        <button onClick={handleStepButton}>Step</button>
+      </div>
     </div>
   );
 }

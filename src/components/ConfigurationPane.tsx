@@ -1,5 +1,6 @@
 import WorldConfig from "../utils/WorldConfig";
 import CanvasConfig from "../utils/CanvasConfig";
+import styles from "./ConfigurationPane.module.css"
 
 interface ConfigurationPaneProps {
   worldConfig: WorldConfig,
@@ -47,9 +48,9 @@ const ConfigurationPane = ({
   }
 
   return (
-    <div>
+    <div className={styles.configContainer}>
       <h2>Configuration</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className={styles.configForm}>
         <h3>World</h3>
         <label>
           Width (cells):
@@ -84,7 +85,8 @@ const ConfigurationPane = ({
           Max generations:
           <input name="maxGens" type="number" defaultValue={0} />
         </label>
-        <button type="submit">Apply</button>
+        <br />
+        <button type="submit" className={styles.submitButton}>Apply</button>
       </form>
     </div>
   )
