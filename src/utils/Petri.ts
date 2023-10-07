@@ -204,8 +204,12 @@ class Petri {
           return this.world[x][y];
         }
 
-    return this.worldConfig.oobValue; // TODO: oobWrap
-
+    if (!this.worldConfig.oobWrap) {
+      return this.worldConfig.oobValue;
+    }
+    else {
+      return this.world[x % this.worldConfig.width][y % this.worldConfig.height];
+    }
   }
 }
 
